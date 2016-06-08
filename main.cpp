@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstdio>
+#include <time.h>
 
 #ifdef __GNUC__
 #include <getopt.h>
@@ -409,6 +410,10 @@ int main(int argc, char **argv)
         output_file << write_rotated_rect(cmt.bb_rot) << endl;
     }
 
+    clock_t start, end;
+    double elapsed;
+    start = clock();
+
     //Main loop
     while (true)
     {
@@ -443,7 +448,14 @@ int main(int argc, char **argv)
         else
         {
             //TODO: Provide meaningful output
-            FILE_LOG(logINFO) << "#" << frame << " active: " << cmt.points_active.size();
+            end = clock();
+    	    elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
+            static int frameStart = frame;
+
+	    if (elapsed > 0) {
+               int fps = (frame-frameStart)/elapsed;
+               FILE_LOG(logINFO) << "#" << frame << " active: " << cmt.points_active.size() << " fps:: " << fps;
+            }
         }
 
         //Display image and then quit if requested.
